@@ -34,7 +34,7 @@ void daemonize(){
 
 int main(){
 
-    daemonize();
+    //daemonize();
     while (1) {
         sleep(1);
     }
