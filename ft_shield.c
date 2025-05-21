@@ -23,6 +23,7 @@ void write_payload() {
     }
 
     close(fd);
+    
     if (chmod(TARGET_PATH, 0755) == -1) exit(EXIT_FAILURE);
 }
 
