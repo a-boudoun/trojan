@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
 
 extern const char _binary_payload_start[];
 extern const char _binary_payload_end[];
@@ -60,7 +61,7 @@ int main() {
 
     printf("%s\n", getlogin());
     write_payload();
-    etup_systemd_service();
+    setup_systemd_service();
     
     return EXIT_SUCCESS;
 }
