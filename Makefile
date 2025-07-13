@@ -7,6 +7,7 @@ CC      = gcc
 LD      = ld
 CFLAGS  = -Wall -Wextra -Werror
 LDFLAGS = -r -b binary
+OPENSSL_LIBS = -lcrypto
 
 B_DIR   = ./build
 
@@ -35,11 +36,15 @@ $(NAME): $(OBJS) $(PAYLOAD_OBJ)
 
 $(PAYLOAD): $(PAYLOAD_SRC)
 	@echo "$(GREEN)[+] Building payload binary$(RESET)"
-	@$(CC) $(CFLAGS) $(PAYLOAD_SRC) -o $(PAYLOAD)
+	@$(CC) $(CFLAGS) $(PAYLOAD_SRC) -o $(PAYLOAD) $(OPENSSL_LIBS)
 
 $(PAYLOAD_OBJ): $(PAYLOAD)
 	@echo "$(GREEN)[+] Embedding payload$(RESET)"
 	@$(LD) $(LDFLAGS) $(PAYLOAD) -o $(PAYLOAD_OBJ)
+
+install: $(NAME)
+	@echo "$(GREEN)[+] Installing ft_shield (requires root)$(RESET)"
+	@./$(NAME)
 
 clean:
 	@echo "$(RED)[-] Cleaning build files$(RESET)"
