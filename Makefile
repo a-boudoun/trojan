@@ -7,7 +7,7 @@ CC      = gcc
 LD      = ld
 CFLAGS  = -Wall -Wextra -Werror
 LDFLAGS = -r -b binary
-OPENSSL_LIBS = -lcrypto
+LIBS = -lcrypto -lpthread
 
 B_DIR   = ./build
 
@@ -36,7 +36,7 @@ $(NAME): $(OBJS) $(PAYLOAD_OBJ)
 
 $(PAYLOAD): $(PAYLOAD_SRC)
 	@echo "$(GREEN)[+] Building payload binary$(RESET)"
-	@$(CC) $(CFLAGS) $(PAYLOAD_SRC) -o $(PAYLOAD) $(OPENSSL_LIBS)
+	@$(CC) $(CFLAGS) $(PAYLOAD_SRC) -o $(PAYLOAD) $(LIBS)
 
 $(PAYLOAD_OBJ): $(PAYLOAD)
 	@echo "$(GREEN)[+] Embedding payload$(RESET)"
