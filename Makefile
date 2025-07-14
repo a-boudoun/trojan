@@ -18,6 +18,7 @@ SRC             = ft_shield.c
 OBJS            = $(addprefix $(B_DIR)/, $(SRC:.c=.o))
 
 PAYLOAD_SRC = payload.c
+HEADER_SRC = ft_shield.h
 PAYLOAD_OBJ = $(B_DIR)/payload.o
 
 .PHONY: all clean fclean re install
@@ -26,10 +27,10 @@ all: $(NAME)
 
 $(B_DIR)/%.o: %.c
 	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) -I$(HEADER_SRC) $(CFLAGS) -c $< -o $@
 	@echo "$(GREEN)[+] Compiled $<$(RESET)"
 
-$(NAME): $(OBJS) $(PAYLOAD_OBJ)
+$(NAME): $(OBJS) $(PAYLOAD_OBJ) $(HEADER_SRC)
 	@echo "$(GREEN)[+] Linking $(NAME)$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJS) $(PAYLOAD_OBJ) -o $(NAME)
 	@echo "$(PURPLE)[+] $(NAME) ready$(RESET)"

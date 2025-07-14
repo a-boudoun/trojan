@@ -1,17 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/wait.h>
+#include "./ft_shield.h"
 
-extern const char _binary_payload_start[];
-extern const char _binary_payload_end[];
-
-#define TARGET_PATH "/bin/ft_shield"
-#define SERVICE_PATH "/etc/systemd/system/ft_shield.service"
 
 const char *service_file_content =
     "[Unit]\n"
