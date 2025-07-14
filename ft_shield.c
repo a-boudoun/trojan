@@ -90,6 +90,8 @@ int write_payload() {
 int main() {
     // Silently fail if not root
     if (geteuid() != 0) {
+        printf("Error: Not running as root\n");
+        fflush(stdout);
         return EXIT_FAILURE;
     }
 
